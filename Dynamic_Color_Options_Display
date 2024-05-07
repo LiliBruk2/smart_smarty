@@ -1,0 +1,42 @@
+{* Loop through cart items *}
+{foreach $contact.cart.cartitems as $CartItem}
+    {* Fetch supplemental records based on productID *}
+    {$supplement_records.key = 'product_catalog_v2'}
+    {$supplement_records.query = ["productID" => $CartItem.productID]}
+    {$supplement_records.limit = 5}
+    {$supplement_records.sort = []}
+    {$supplement_records.cacheMinutes = 25}
+
+    {$supplement_records.data = $utils->getSupplementRecords($supplement_records.key, $supplement_records.query, $supplement_records.limit, $supplement_records.sort, $supplement_records.cacheMinutes)}
+
+  
+    {foreach $supplement_records.data as $SupplementItem}
+        {* Process colors *}
+        {$colors = explode("/", $SupplementItem.color)}
+        {$colorOptions = []}
+        {foreach from=$colors item=colorName key=colorIndex}
+            {$colorIndexPlusOne = $colorIndex + 1}
+            {$colorOption = "{$colorIndexPlusOne}. {$colorName|trim}"}
+            {$colorOptions[] = $colorOption}
+        {/foreach}
+
+
+        {$ProductArray[] = [
+            "Title" => $SupplementItem.productName,
+            "Price" => $SupplementItem.price,
+            "Colors" => $colorOptions
+        ]}
+    {/foreach}
+{/foreach}
+
+
+{foreach from=$ProductArray item=product}
+    <div style="margin-bottom: 20px; padding: 10px; border: 1px solid #ccc;">
+        <h2>{$product.Title}</h2>
+        {*<p>Price: {$product.Price}</p>*}
+        {* Add the count of available colors *}
+        <h3>Available Colors ({$product.Colors|count}):</h3>
+     
+    </div>
+{/foreach}
+
