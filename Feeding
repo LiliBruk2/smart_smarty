@@ -1,0 +1,126 @@
+{foreach $contact.cart.cartitems as $Item}
+{$utils->jsonPrettyPrint($Item)}
+
+{$supplement_records.key = 'product_catalog_v2'}
+{$supplement_records.query = ["productID" => {$Item.productID}]}
+{$supplement_records.limit = 5}
+{$supplement_records.sort = []}
+{$supplement_records.cacheMinutes = 25}
+
+{$supplement_records.data = $utils->getSupplementRecords($supplement_records.key, $supplement_records.query, $supplement_records.limit, $supplement_records.sort, $supplement_records.cacheMinutes)}
+{$utils->jsonPrettyPrint($supplement_records.data)}
+{foreach $supplement_records.data as $Item1}
+{$utils->jsonPrettyPrint($Item1)}
+
+{/foreach}
+
+{/foreach}
+
+
+
+{$browsedProduct=$utils->getEventRecords("product viewed")}
+
+{foreach $browsedProduct as $Item}
+
+{*לא יוצר אררי רק מדפיס*}
+{*
+{$supplement_records.key = 'product_catalog_v2'}
+{$supplement_records.query = ["productID" => {$Item.properties.id}]}
+{$supplement_records.limit = 5}
+{$supplement_records.sort = []}
+{$supplement_records.cacheMinutes = 25}
+
+{$supplement_records.data = $utils->getSupplementRecords($supplement_records.key, $supplement_records.query, $supplement_records.limit, $supplement_records.sort, $supplement_records.cacheMinutes)}
+{foreach $supplement_records.data as $Item1}
+  Title: {$Item1.productName}<br>
+  Price: {$Item1.price}<br>
+  Description: {$Item1.description}<br>
+ Bar's picks <a href="{$Item1.url}"><img src="{$Item1.images}" alt=""></a>
+
+
+
+ 
+  {/foreach}
+  {/foreach}
+  
+  {*לא מדפיס רק יוצר וניגש*}
+
+{foreach  $contact.cart.cartitems as $Item}  
+{$CartArray[] = [
+    "Title" => {$Item.name},
+    "Price" => {$Item.price}
+       ]}
+ {/foreach} 
+ 
+ {$browsedProduct=$utils->getEventRecords("product viewed")}
+
+{foreach $browsedProduct as $Item}
+{$supplement_records.key = 'product_catalog_v2'}
+{$supplement_records.query = ["productID" => {$Item.properties.id}]}
+{$supplement_records.limit = 5}
+{$supplement_records.sort = []}
+{$supplement_records.cacheMinutes = 25}
+
+{$supplement_records.data = $utils->getSupplementRecords($supplement_records.key, $supplement_records.query, $supplement_records.limit, $supplement_records.sort, $supplement_records.cacheMinutes)}
+{foreach $supplement_records.data as $Item}
+  
+  
+{$ProductArray[] = [
+    "Title" => {$Item.productName},
+    "Price" => {$Item.price}
+       ]}
+       
+ {/foreach} 
+ {/foreach} 
+ {$utils->jsonPrettyPrint($CartArray)}<br>
+ {$utils->jsonPrettyPrint($ProductArray)}
+
+
+  
+
+  
+  {*https://support.cordial.com/hc/en-us/articles/115005856368-Sort-an-array
+  
+  ש"ב 
+  לסמן כל אררי - עם עוד איזשהו קי-וואליו של טקסט כדי לדעת להבחין בינהם
+  ואז לחבר פור איץ שלישי שלוקח את אותו השם משניהם ומאחד 
+  
+  combine array 
+  
+  לרוץ על היוזר ולהדפיס שלושה מוצרים , 
+  במידה ויש לו קארט להדפיס מהקארט וכל השאר להגפיס מהפרודוקט וויז
+  משמע- אם יש לו מוצר אחד בקארט שישלים מהשאר 
+  
+  לגרום להם לדבר 
+  רמז- ליצור אובייקטים שי
+  
+  ליצור אררי שלישי מהשניים הקיימים
+  *}
+  
+ 
+{$prodView.name = "product viewed"}
+{$prodView.limit = 1}
+{$prodView.new = "-1 day"|date_format:"Y-m-d\TH:i:sO"}
+
+{$browsedProduct=$utils->getEventRecords($prodView.name)}
+
+{foreach $browsedProduct as $item}
+
+{$supplement_records.key = 'product_catalog_v2'}
+{$supplement_records.query = ["productID" => {$item.properties.id}]}
+{$supplement_records.limit = []}
+{$supplement_records.sort = ['column'=> 'lm', 'direction'=>'ASC']}
+{$supplement_records.cacheMinutes = 25}
+
+
+
+{$supplement_records.data = $utils->getSupplementRecords($supplement_records.key, $supplement_records.query, $supplement_records.limit, $supplement_records.sort, $supplement_records.cacheMinutes)}
+{$utils->jsonPrettyPrint($supplement_records.data)}
+
+{foreach $supplement_records.data as $RealItem}
+  <img src="{$RealItem.mobile_images}"/><br/>
+    {$RealItem.url}
+{/foreach}
+{/foreach}
+ 
+
